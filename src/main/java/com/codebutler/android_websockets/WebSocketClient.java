@@ -46,6 +46,14 @@ public class WebSocketClient {
         sTrustManagers = tm;
     }
 
+    public WebSocketClient(Listener listener) {
+        this(null, listener, null);
+    }
+
+    public WebSocketClient(Listener listener, List<BasicNameValuePair> extraHeaders) {
+        this(null, listener, extraHeaders);
+    }
+
     public WebSocketClient(URI uri, Listener listener, List<BasicNameValuePair> extraHeaders) {
         mURI          = uri;
         mListener = listener;
@@ -62,6 +70,10 @@ public class WebSocketClient {
     }
 
     public void connect() {
+        connect(mURI);
+    }
+
+    public void connect(final URI targetUri) {
         if (mThread != null && mThread.isAlive()) {
             return;
         }
@@ -71,6 +83,8 @@ public class WebSocketClient {
             public void run() {
                 try {
                     String secret = createSecret();
+
+                    mURI = targetUri;
 
                     int port = (mURI.getPort() != -1) ? mURI.getPort() : (mURI.getScheme().equals("wss") ? 443 : 80);
 
